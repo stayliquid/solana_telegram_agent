@@ -1,8 +1,6 @@
 import os
 import asyncio
 import logging
-from dotenv import load_dotenv
-load_dotenv()
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import HTMLResponse
 from telegram import Update
