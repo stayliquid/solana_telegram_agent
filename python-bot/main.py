@@ -1,7 +1,6 @@
 import os
 import asyncio
 import logging
-from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 load_dotenv()
 from fastapi import FastAPI, Request, Response
@@ -17,48 +16,39 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 
 if not TELEGRAM_TOKEN:
     raise ValueError("TELEGRAM_TOKEN is not set in the environment!")
-if not WEBHOOK_URL:
-    raise ValueError("WEBHOOK_URL is not set! Get it from ngrok and add it to .env")
 
 
 # --- Telegram Bot Application Setup ---
-def setup_application() -> Application:
-    application = (
-        Application.builder()
-        .token(TELEGRAM_TOKEN)
-        .read_timeout(30)
-        .write_timeout(30)
-        .build()
-    )
-    application.add_handler(CommandHandler("start", start_handler))
-    application.add_handler(MessageHandler(filters.TEXT | filters.VOICE, text_and_voice_handler))
-    application.add_handler(CallbackQueryHandler(button_handler))
-    
-    return application
+# This setup is now simpler as we don't manage the webhook in the app's lifecycle
+application = (
+    Application.builder()
+    .token(TELEGRAM_TOKEN)
+    .read_timeout(30)
+    .write_timeout(30)
+    .build()
+)
 
-application = setup_application()
-
-
-# --- FastAPI Lifespan and Webhook Management ---
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    logger.info("Initializing bot and setting webhook...")
-    await application.initialize()
-    await application.bot.set_webhook(url=f"{WEBHOOK_URL}/telegram")
-    
-    yield
-
-    logger.info("Shutting down bot and deleting webhook...")
-    await application.shutdown()
-    await application.bot.delete_webhook()
+application.add_handler(CommandHandler("start", start_handler))
+application.add_handler(MessageHandler(filters.TEXT | filters.VOICE, text_and_voice_handler))
+application.add_handler(CallbackQueryHandler(button_handler))
 
 
 # --- FastAPI App and Endpoints ---
-api = FastAPI(lifespan=lifespan)
+api = FastAPI()
+
+@api.on_event("startup")
+async def startup():
+    # This is a good place to initialize the bot application,
+    # it runs once when the serverless function starts.
+    await application.initialize()
+
+@api.on_event("shutdown")
+async def shutdown():
+    # This runs when the serverless function is about to be shut down.
+    await application.shutdown()
 
 @api.post("/telegram")
 async def telegram_webhook(request: Request):
@@ -67,6 +57,7 @@ async def telegram_webhook(request: Request):
         data = await request.json()
         update = Update.de_json(data, application.bot)
         
+        # The application is already initialized at startup
         await application.process_update(update)
         
         return Response(status_code=200)
