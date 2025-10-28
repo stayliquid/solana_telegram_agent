@@ -124,11 +124,11 @@ async def _send_final_link(message_to_edit: Message, context: ContextTypes.DEFAU
     apy_str = escape_markdown_v2(f"{proposal['apy']:.2%}")
 
     message_text = (
-        f"✅ Great\! You're depositing *{amount_str} {input_token_symbol}* into the `{pool_name}` pool\.\n\n"
+        f"✅ Great\\! You're depositing *{amount_str} {input_token_symbol}* into the `{pool_name}` pool\\.\n\n"
         f"🔹 *Liquidity:* {liquidity_str}\n"
-        f"🔹 *Volume \(24h\):* {volume_str}\n"
-        f"🔹 *APY \(24h\):* {apy_str}\n\n"
-        f"Click the button below to open your wallet and confirm the transaction\."
+        f"🔹 *Volume \\(24h\\):* {volume_str}\n"
+        f"🔹 *APY \\(24h\\):* {apy_str}\n\n"
+        f"Click the button below to open your wallet and confirm the transaction\\."
     )
     
     keyboard = [[InlineKeyboardButton("🚀 Add Liquidity", url=final_url)]]
@@ -208,11 +208,11 @@ async def _handle_new_query(update: Update, context: ContextTypes.DEFAULT_TYPE, 
     volume_str = escape_markdown_v2(f"${proposal.get('volume_24h', 0):,.0f}")
     
     details_text = (
-        f"✅ I found a great option for you\! Here are the details:\n\n"
+        f"✅ I found a great option for you\\! Here are the details:\n\n"
         f"🔹 *Pool:* `{pool_name}`\n"
         f"🔹 *Liquidity:* {liquidity_str}\n"
-        f"🔹 *Volume \(24h\):* {volume_str}\n"
-        f"🔹 *APY \(24h\):* {apy_str}"
+        f"🔹 *Volume \\(24h\\):* {volume_str}\n"
+        f"🔹 *APY \\(24h\\):* {apy_str}"
     )
     
     message_text = f"{details_text}\n\nDo you want to proceed with this pool?"
@@ -312,7 +312,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         token_symbol = proposal.get("raw_proposal", {}).get("mintA", {}).get("symbol", "tokens")
         await context.bot.send_message(
             chat_id=query.message.chat_id,
-            text=f"Please reply with the amount of *{escape_markdown_v2(token_symbol)}* you would like to deposit\.",
+            text=f"Please reply with the amount of *{escape_markdown_v2(token_symbol)}* you would like to deposit\\.",
             parse_mode="MarkdownV2"
         )
         context.user_data['state'] = 'awaiting_amount'
