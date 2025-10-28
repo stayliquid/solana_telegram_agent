@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackQueryHandler
 
-from bot.handlers import start_handler,  text_and_voice_handler, button_handler
+from python_bot.bot.handlers import start_handler,  text_and_voice_handler, button_handler
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -67,6 +67,11 @@ async def telegram_webhook(request: Request):
 async def health_check():
     """A simple health check endpoint to verify the server is running."""
     return {"status": "ok"}
+
+@api.get("/test")
+async def test_endpoint():
+    """A simple test endpoint to confirm the API is responsive."""
+    return {"message": "Hello from your Vercel API!"}
 
 @api.get("/redirect", response_class=HTMLResponse)
 async def redirect_to_solana_action(target: str):

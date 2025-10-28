@@ -9,11 +9,11 @@ from pydub import AudioSegment
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from telegram.ext import ContextTypes
 
-from core.agent import parse_intent_from_text
-from core.engine import find_and_propose_pool
-from core.openai_client import openai_client
-from core.raydium_helpers import get_clmm_deposit_amounts
-from bot.utils import escape_markdown_v2
+from python_bot.core.agent import parse_intent_from_text
+from python_bot.core.engine import find_and_propose_pool
+from python_bot.core.openai_client import openai_client
+from python_bot.core.raydium_helpers import get_clmm_deposit_amounts
+from python_bot.bot.utils import escape_markdown_v2
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO

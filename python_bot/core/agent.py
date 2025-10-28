@@ -1,7 +1,7 @@
 import json
 import logging
-from core.schemas import FIND_LIQUIDITY_POOLS_TOOL
-from core.openai_client import openai_client, USE_MOCK_OPENAI
+from python_bot.core.schemas import FIND_LIQUIDITY_POOLS_TOOL
+from python_bot.core.openai_client import openai_client, USE_MOCK_OPENAI
 
 logger = logging.getLogger(__name__)
 
